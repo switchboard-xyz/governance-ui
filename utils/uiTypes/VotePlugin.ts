@@ -78,6 +78,7 @@ export class VotingClient {
   walletPk: PublicKey | null | undefined
   votingNfts: NFTWithMeta[]
   oracles: PublicKey[]
+  currentOracle: PublicKey
   instructions: TransactionInstruction[]
   clientType: VotingClientType
   noClient: boolean
@@ -87,6 +88,7 @@ export class VotingClient {
     this.walletPk = walletPk
     this.votingNfts = []
     this.oracles = []
+    this.currentOracle = PublicKey.default
     this.instructions = []
     this.noClient = true
     this.clientType = VotingClientType.NoClient
@@ -210,8 +212,10 @@ export class VotingClient {
       console.log('the wallet is')
       console.log(this.walletPk)
       console.log("MY ORACLES");*/
-      console.log("Vote client logging oracles and instructions");
+      console.log("Vote client logging oracles, currentOracle, and instructions");
       console.log(this.oracles);
+      console.log("current oracle:");
+      console.log(this.currentOracle);
       console.log(this.instructions);
       instructions.push(
         this.instructions[0]
@@ -219,7 +223,7 @@ export class VotingClient {
       let [vwr] = await PublicKey.findProgramAddress(
           [
             Buffer.from('VoterWeightRecord'),
-            this.oracles[0].toBytes(),
+            this.currentOracle.toBytes(),
           ],
           SWITCHBOARD_ADDIN_ID,
       );
@@ -493,6 +497,9 @@ export class VotingClient {
   }
   _setOracles = (oracles: PublicKey[]) => {
     this.oracles = oracles
+  }
+  _setCurrentOracle = (oracle: PublicKey) => {
+    this.currentOracle = oracle
   }
   _setInstructions = (instructions: TransactionInstruction[]) => {
     this.instructions = instructions

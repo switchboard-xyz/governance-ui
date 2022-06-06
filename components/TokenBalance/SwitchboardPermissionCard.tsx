@@ -16,8 +16,10 @@ import Link from 'next/link'
 //import { getNftVoterWeightRecord } from 'NftVotePlugin/sdk/accounts'
 //import useNftPluginStore from 'NftVotePlugin/store/nftPluginStore'
 import { useState, useEffect } from 'react'
-//import useVotePluginsClientStore from 'stores/useVotePluginsClientStore'
+import useVotePluginsClientStore from 'stores/useVotePluginsClientStore'
 import useWalletStore from 'stores/useWalletStore'
+import Select from '@components/inputs/Select'
+import useSwitchboardPluginStore from '../../SwitchboardVotePlugin/store/switchboardStore'
 
 const SwitchboardPermissionCard = () => {
   const { fmtUrlWithCluster } = useQueryContext()
@@ -35,6 +37,15 @@ const SwitchboardPermissionCard = () => {
   const ownTokenRecord = wallet?.publicKey
     ? tokenRecords[wallet.publicKey!.toBase58()]
     : null
+
+  const myOracles = useSwitchboardPluginStore((s) => s.state.oracleKeys)
+  const currentOracle = useSwitchboardPluginStore((s) => s.state.currentOracle)
+  const currentClient = useVotePluginsClientStore(
+    (s) => s.state.currentRealmVotingClient
+  )
+  const { setCurrentOracle } = useSwitchboardPluginStore()
+  console.log("ORACLES");
+  console.log(myOracles);
 
   useEffect(() => {
     console.log("token records:");
@@ -86,8 +97,23 @@ const SwitchboardPermissionCard = () => {
         </Link>
       </div>
       <div className="space-y-4">Switchboard</div>
+      <Select
+        className="h-12"
+        value = {currentOracle.toBase58()}
+        onChange = {(value) => setCurrentOracle(value, currentClient) }
+      >
+          {
+            myOracles.map((o) => (
+              <Select.Option value={o}>
+              {o.toBase58()}
+              </Select.Option>
+            ))
+          }
+      </Select>
       {connected && !ownTokenRecord && (
+          <>
         <Button className="w-full">Go to Switchboard.xyz</Button>
+          </>
       )}
     </div>
   )

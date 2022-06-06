@@ -8,9 +8,11 @@ interface SwitchboardPluginStore extends State {
     votingPower: BN
     isLoading: boolean
     oracleKeys: Array<PublicKey>
+    currentOracle: PublicKey,
     instructions: Array<TransactionInstruction>
   }
   setVotingPower: (votingPower: BN) => void
+  setCurrentOracle: (currentOracle: PublicKey) => void
   setIsLoading: (val: boolean) => void
   setOracleKeys: (keys: Array<PublicKey>, votingClient: VotingClient) => void
   instructions: (instructions: Array<TransactionInstruction>, votingClient: VotingClient) => void
@@ -21,6 +23,7 @@ const defaultState = {
   isLoading: false,
   oracleKeys: [],
   instructions: [],
+  currentOracle: PublicKey.default,
 }
 
 const useSwitchboardPluginStore = create<SwitchboardPluginStore>(
@@ -42,6 +45,12 @@ const useSwitchboardPluginStore = create<SwitchboardPluginStore>(
       votingClient._setOracles(oracleKeys);
       set((s) => {
         s.state.oracleKeys = oracleKeys
+      })
+    },
+    setCurrentOracle: (currentOracle, votingClient) => {
+      votingClient._setCurrentOracle(currentOracle);
+      set((s) => {
+        s.state.currentOracle = currentOracle
       })
     },
     setInstructions: (instructions, votingClient) => {

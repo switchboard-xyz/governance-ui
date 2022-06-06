@@ -67,7 +67,7 @@ export function useVotingPlugins() {
     setMaxVoterWeight,
     setIsLoadingNfts,
   } = useNftPluginStore()
-  const { setIsLoading, setVotingPower, setOracleKeys, setInstructions } = useSwitchboardPluginStore()
+  const { setIsLoading, setVotingPower, setOracleKeys, setCurrentOracle, setInstructions } = useSwitchboardPluginStore()
 
   const wallet = useWalletStore((s) => s.current)
   const connection = useWalletStore((s) => s.connection)
@@ -215,6 +215,7 @@ export function useVotingPlugins() {
       }
 
       setOracleKeys(myNodesForRealm, currentClient);
+      setCurrentOracle(myNodesForRealm[0], currentClient);
       setInstructions(setVoterWeightInstructions, currentClient);
       console.log(myNodesForRealm);
 
